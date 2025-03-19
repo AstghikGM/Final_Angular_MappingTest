@@ -21,10 +21,17 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
-               "src/assets"             
+               "src/assets",
+               {
+                "glob": "**/*",
+                "input": "node_modules/leaflet/dist/images/", // you may need to change this path, according to your files structure
+                "output": "./assets"
+              }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/leaflet/dist/leaflet.css",
+              "node_modules/leaflet-routing-machine/dist/leaflet-routing-machine.css"
             ],
             "scripts": []
           },

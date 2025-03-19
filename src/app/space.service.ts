@@ -16,6 +16,5 @@ export class SpaceService {
   // get spaces
   getSpaces(): Observable<Space[]> {
      return this.http.get<Space[]>(this.apiUrl);
-   // return this.http.get<Space[]>(`${this.apiUrl}`);
   }
 }
