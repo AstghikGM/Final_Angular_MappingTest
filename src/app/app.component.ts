@@ -34,7 +34,12 @@ export class AppComponent implements OnInit{
   private map:any;
   @Input() lat: number = DEFAULT_LAT;
   @Input() lon: number = DEFAULT_LON;
+  @Input() lat2: number = DEFAULT_LAT;
+  @Input() lon2: number = DEFAULT_LON;
+  @Input() lat3: number = DEFAULT_LAT;
+  @Input() lon3: number = DEFAULT_LON;
   @Input() titulo: string = TITULO ;
+  @Input() titulo2: string = TITULO ;
   
   
 
@@ -46,21 +51,13 @@ export class AppComponent implements OnInit{
        next: (response: Space[]) => {
          this.spaces = [...response];
          console.debug('GetSpaces was successful', this.spaces);
-          this.lat = this.spaces[6].longitude!;
-          this.lon = this.spaces[6].latitude!;
+          this.lat = this.spaces[6].latitude!;
+          this.lon = this.spaces[6].longitude!;
+          this.lat2 = this.spaces[5].latitude!;
+          this.lon2 = this.spaces[5].longitude!;
           this.titulo = 'space7 - Madrid'; 
+          this.titulo2 = 'space6 - Viena';
           this.initMap();
-
-           /*if(this.spaces.length >= 4) {
-             this.space1 = this.spaces[0].id;
-             this.space2 = this.spaces[1].id;
-             this.space3 = this.spaces[2].id;
-             this.space4 = this.spaces[3].id;
-             
-            }else{
-              console.warn('NOT ENOUGH SPACES');
-            }*/
-
        },
        error: (err) => {
          console.warn('Error at GetSpaces', err);
@@ -72,13 +69,13 @@ export class AppComponent implements OnInit{
   
   
   private initMap(): void {
-      // MAP CONFIGURATION
-      this.map = L.map('map', {
+      // ---- MAP INICIALIZATION ---- 
+     this.map = L.map('map', {
         center: [this.lat, this.lon],
         zoom: 10
-      });
+      }); 
  
-      // ICON PERSONALIZATION
+      // ---- ICON PERSONALIZATION ---- 
       var iconDefault = L.icon({
         iconRetinaUrl,
         iconUrl,
@@ -91,14 +88,15 @@ export class AppComponent implements OnInit{
       });
       L.Marker.prototype.options.icon = iconDefault;
  
-      //MAP LAYER CREATION
+      // ---- MAP LAYER CREATION ---- 
       
-      const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        attribution: '© OpenStreetMap'
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' //COPYRIGHT!!
+        //attribution: '© OpenStreetMap' 
       }); 
 
-      /* ONLY IN ENGLISH - CARTOO STYLE 1 light_all / dark_all
+      /* ONLY IN ENGLISH - CARTOO STYLE 1 light_all / dark_all 
        const tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
       {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
@@ -130,18 +128,73 @@ export class AppComponent implements OnInit{
         crossOrigin: true
       });
      */
-     
-      tiles.addTo(this.map);
-
-      // MARKER WITH POP UP => marker[coordinates]
-      const marker = L.marker([this.lat, this.lon]).bindPopup(this.titulo);
-      marker.addTo(this.map);
- 
-      // MARKER WITH CIRCLE
-      //const mark = L.circleMarker([this.lat, this.lon]).addTo(this.map);
-      //mark.addTo(this.map);
       
 
+      tiles.addTo(this.map);
+
+      // ---- MULTI-LAYERS IN MAP ----
+      //            ---
+      
+
+      // ---- MARKER WITH POP UP ---- we use marker[coordinates]
+
+        // ONE MARKER
+      //const marker = L.marker([this.lat, this.lon]).bindPopup(`${this.titulo}: (Lat: ${this.lat}, Lng: ${this.lon})`);
+      //marker.addTo(this.map); 
+      
+
+      // MULTIPLE MARKERS
+      /* METHOD 1
+      const coordinates = [ // Define multiple markers location, latitude, and longitude
+        { lat: this.lat, lon: this.lon, name: `${this.titulo}: (Lat: ${this.lat}, Lng: ${this.lon})`},
+        { lat: this.lat2, lon: this.lon2, name: `${this.titulo2}: (Lat: ${this.lat2}, Lng: ${this.lon2})`},
+      ];
+
+      coordinates.forEach( coordinates => {
+         L.marker([coordinates.lat, coordinates.lon])
+          .bindPopup(`${coordinates.name}`)
+          .addTo(this.map);
+      });
+      */
+      
+       // METHOD 2
+       var loc1 = L.marker([this.lat, this.lon]).bindPopup(`${this.titulo}: (Lat: ${this.lat}, Lng: ${this.lon})`),
+           loc2 = L.marker([this.lat2, this.lon2]).bindPopup(`${this.titulo2}: (Lat: ${this.lat2}, Lng: ${this.lon2})`);
+
+       var locations = L.featureGroup([loc1, loc2]); //function .addLayer to add new loc
+       locations.addTo(this.map);
+       this.map.fitBounds(locations.getBounds());
+      
+      // ---- COORDINATES FOR EVERY POINT WHEN CLICKED ---- we get (latitude, longitude) | MARKER STYLE CAN BE CHANGED
+      /* // METHOD 1. Version with popup
+      this.map.on('click', (e: L.LeafletMouseEvent) => {
+       L.popup()//oppened object at clicking
+        .setLatLng(e.latlng) //gets coordinates and fixes them at their ubication [setWhereCoord(getCoord.)]
+        .setContent("You clicked the map at " + e.latlng.toString()) //text
+        .openOn(this.map); //opens and closes popup when another one is oppened
+      }); //calls the function whenever the map is clicked on
+      */
+      
+
+         // METHOD 2. Version with markers
+
+      let clickedPoint: L.Marker | null = null; 
+      this.map.on('click', (e: L.LeafletMouseEvent) => {
+       const {lat, lng} = e.latlng;
+       if(clickedPoint){ // if it exists => update 
+         clickedPoint.setLatLng([lat, lng])
+         .bindPopup(`Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`);
+       }else{ // if doesn't exist it is created
+         clickedPoint = L.marker([lat, lng])
+        .bindPopup(`Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`) //only 6 decimals??
+        .addTo(this.map); 
+       }
+        
+       clickedPoint.openPopup();
+      }); 
+
+
     }
+
       
 }
