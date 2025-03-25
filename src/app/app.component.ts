@@ -94,7 +94,7 @@ export class AppComponent implements OnInit{
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' //COPYRIGHT!!
         //attribution: '© OpenStreetMap' 
-      }); 
+      });  
 
       /* ONLY IN ENGLISH - CARTOO STYLE 1 light_all / dark_all 
        const tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
@@ -103,11 +103,11 @@ export class AppComponent implements OnInit{
         subdomains: 'abcd',
         maxZoom: 20
       }
-      );*/
+      ); */
      
 
 
-     /* ONLY IN ENGLISH - CARTOO STYLE 2 voyager
+     /* ONLY IN ENGLISH - CARTOO STYLE 2 voyager 
        const tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
       {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
