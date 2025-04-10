@@ -90,31 +90,31 @@ export class AppComponent implements OnInit{
  
       // ---- MAP LAYER CREATION ---- 
       
-     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+     const tiles_1 = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' //COPYRIGHT!!
         //attribution: '© OpenStreetMap' 
       });  
 
-      /* ONLY IN ENGLISH - CARTOO STYLE 1 light_all / dark_all 
-       const tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+      /* ONLY IN ENGLISH - CARTOO STYLE 1 light_all / dark_all */
+       const tiles_2 = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
       {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
         maxZoom: 20
       }
-      ); */
+      ); 
      
 
 
-     /* ONLY IN ENGLISH - CARTOO STYLE 2 voyager 
-       const tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+     /* ONLY IN ENGLISH - CARTOO STYLE 2 voyager */ 
+       const tiles_3 = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
       {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
         maxZoom: 20
       }
-      );*/
+      );
 
      
      
@@ -129,11 +129,18 @@ export class AppComponent implements OnInit{
       });
      */
       
-
-      tiles.addTo(this.map);
+      // mapa por defecto 
+      tiles_1.addTo(this.map);
+      
 
       // ---- MULTI-LAYERS IN MAP ----
-      //            ---
+      L.control.layers(
+        {
+          "OSM": tiles_1,
+          "CARTOO_LIGHT": tiles_2,
+          "CARTOO_VOYAGER": tiles_3
+        }
+      ).addTo(this.map);
       
 
       // ---- MARKER WITH POP UP ---- we use marker[coordinates]
@@ -157,7 +164,7 @@ export class AppComponent implements OnInit{
       });
       */
       
-       // METHOD 2
+       // METHOD 2 
        var loc1 = L.marker([this.lat, this.lon]).bindPopup(`${this.titulo}: (Lat: ${this.lat}, Lng: ${this.lon})`),
            loc2 = L.marker([this.lat2, this.lon2]).bindPopup(`${this.titulo2}: (Lat: ${this.lat2}, Lng: ${this.lon2})`);
 
@@ -183,10 +190,10 @@ export class AppComponent implements OnInit{
        const {lat, lng} = e.latlng;
        if(clickedPoint){ // if it exists => update 
          clickedPoint.setLatLng([lat, lng])
-         .bindPopup(`Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`);
+         .bindPopup(`Lat: ${lat.toFixed(2)}, Lng: ${lng.toFixed(2)}`);
        }else{ // if doesn't exist it is created
          clickedPoint = L.marker([lat, lng])
-        .bindPopup(`Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`) //only 6 decimals??
+        .bindPopup(`Lat: ${lat.toFixed(2)}, Lng: ${lng.toFixed(2)}`) 
         .addTo(this.map); 
        }
         
