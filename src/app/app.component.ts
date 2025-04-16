@@ -5,7 +5,6 @@ import { forkJoin } from 'rxjs';
 
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
-import { icon, Marker } from 'leaflet';
 
 
  
@@ -97,7 +96,7 @@ export class AppComponent implements OnInit{
       });  
 
       /* ONLY IN ENGLISH - CARTOO STYLE 1 light_all / dark_all */
-       const tiles_2 = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+       const tiles_2 = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{zoom}/{x}/{y}{r}.png',
       {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
